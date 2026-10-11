@@ -49,9 +49,9 @@
   .contact .who { font-family: var(--serif); font-size: 20px; font-weight: 700; letter-spacing: 2px; }
   .contact .tel { font-family: var(--serif); font-size: 26px; font-weight: 700; color: var(--enji); letter-spacing: 1px; text-decoration: none; }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn { flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 52px; padding: 0 16px; border-radius: 3px; font-family: var(--serif); font-size: 17px; font-weight: 900; letter-spacing: 1px; text-decoration: none; }
-  .btn.call { background: var(--enji); color: #fff; }
-  .btn.line { background: var(--line-green); color: #fff; font-family: var(--sans); font-weight: 700; }
+  .btn { flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; min-height: 52px; padding: 0 16px; border-radius: 3px; font-family: var(--serif); font-size: 17px; font-weight: 900; letter-spacing: 1px; text-decoration: none; }
+  .btn.call { background: #f4e7e3; color: var(--enji); border: 1px solid #c9a59d; }  /* 淡臙脂底・深紅字（負責人選 R1） */
+  .btn.line { background: #e4edde; color: #3d5a35; border: 1px solid #9db592; letter-spacing: 0; padding: 0 10px; }  /* 淡綠底・深綠字（負責人選 B2） */
   .ico { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: square; }
 
   footer { text-align: center; font-family: var(--serif); font-size: 13px; letter-spacing: 6px; color: var(--nezumi); }
@@ -96,7 +96,7 @@
       <a class="tel" href="tel:0922382533">0922-382533</a>
       <div class="btns">
         <a class="btn call" href="tel:0922382533"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l1.5 4.5-2.5 1.5a11 11 0 0 0 6 6l1.5-2.5L20 15v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></svg>打電話</a>
-        <a class="btn line" href="https://line.me/ti/p/XF2bg2UUic" target="_blank" rel="noopener">加 LINE 詢問</a>
+        <a class="btn line" href="https://line.me/ti/p/XF2bg2UUic" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.2 3 11.2c0 3.6 3.2 6.6 7.5 7.1l-.5 2.7 3.6-2.7c4.6-.4 7.4-3.4 7.4-7.1C21 7.2 17 4 12 4z"/></svg>加 LINE 詢問</a>
       </div>
     </div>
   </section>
