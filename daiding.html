@@ -33,10 +33,26 @@
   .brand { margin: 0 0 4px; font-family: var(--serif); font-size: 12px; letter-spacing: 6px; color: var(--kaki); line-height: 1; }
   h1 { margin: 0; font-family: var(--serif); font-size: 25px; font-weight: 700; letter-spacing: 3px; line-height: 1.25; }
 
-  .how { margin: 22px 0 6px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--enji); border-radius: 0 4px 4px 0; padding: 16px 18px; }
-  .how h2 { margin: 0 0 6px; font-family: var(--serif); font-size: 19px; font-weight: 700; }
-  .how p { margin: 6px 0; }
-  .how .small { font-size: 14px; color: var(--nezumi); }
+  /* 「點幾下就訂好」：實際操作截圖（示範資料） */
+  .steps-sec { margin-top: 26px; }
+  .steps-sec > h2 { font-size: 23px; }
+  .steps { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
+  .step { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
+  .num { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--kaki); color: var(--kaki); font-family: var(--serif); font-weight: 900; font-size: 20px; line-height: 1; background: var(--paper); }
+  .say { margin: 6px 0 10px; font-size: 18px; line-height: 1.65; }
+  .say b { color: var(--enji); font-weight: 900; }
+  .shot { position: relative; display: block; width: 100%; max-width: 280px; padding: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--paper); cursor: zoom-in; box-shadow: 0 1px 0 var(--line-2); }
+  .shot img { display: block; width: 100%; height: auto; }
+  .tag { display: block; max-width: 280px; margin: 0 0 4px; font-size: 13px; letter-spacing: 2px; color: var(--nezumi); }
+  .step-line { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 12px 14px; background: #e4edde; border: 1px solid #9db592; border-radius: 3px; color: #3d5a35; font-size: 16px; }
+  .promise { margin-top: 26px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--enji); border-radius: 0 4px 4px 0; padding: 16px 18px; }
+  .promise p { margin: 6px 0; }
+  .promise .big { font-family: var(--serif); font-size: 20px; font-weight: 900; color: var(--enji); letter-spacing: 1px; }
+  .promise .small { font-size: 15px; color: var(--nezumi); }
+  .sign { text-align: right; font-family: var(--serif); font-size: 15px; color: var(--nezumi); }
+  .intro { margin: 40px 0 0; padding-top: 22px; border-top: 1px solid var(--line); }
+  .intro h2 { margin: 0 0 4px; font-family: var(--serif); font-size: 23px; font-weight: 700; letter-spacing: 2px; }
+  .intro p { margin: 0; font-size: 15px; color: var(--nezumi); }
 
   section { margin-top: 30px; }
   section > h2 { margin: 0 0 4px; font-family: var(--serif); font-size: 21px; font-weight: 700; letter-spacing: 2px; }
@@ -75,10 +91,46 @@
     <div><p class="brand">重 生 禮 儀</p><h1>禮儀用品代訂</h1></div>
   </div>
 
-  <div class="how">
-    <h2>怎麼訂</h2>
-    <p>告別式前，我們會提供親友專屬的下訂連結；也可以直接打電話或 LINE，告訴我們亡者姓名、告別式日期地點，以及想訂的品項。</p>
-    <p class="small">以下為範例照片，點照片可以放大。實際品項與價格以訂購時確認為準。</p>
+  <section class="steps-sec">
+    <h2>點幾下就訂好</h2>
+    <p>親友用手機就能下訂，不用下載 App。以下是實際的手機畫面（示範資料）。</p>
+    <ol class="steps">
+    <li class="step"><span class="num">1</span><div>
+      <p class="say">打開文彥給您的<b>專屬連結</b>，往生者、地點、日期都已經填好，按「開始填寫代訂單」。</p>
+      <span class="tag">示範畫面・點圖可放大</span>
+      <button type="button" class="shot" data-src="img/step1.jpg"><img src="img/step1.jpg" alt="示範：專屬連結打開後的畫面" loading="lazy"></button>
+    </div></li>
+    <li class="step"><span class="num">2</span><div>
+      <p class="say">填上您的<b>姓名</b>和<b>電話</b>。</p>
+      <span class="tag">示範畫面・點圖可放大</span>
+      <button type="button" class="shot" data-src="img/step2.jpg"><img src="img/step2.jpg" alt="示範：填寫訂購人姓名電話" loading="lazy"></button>
+    </div></li>
+    <li class="step"><span class="num">3</span><div>
+      <p class="say">選<b>品項</b>（花籃、蘭花、水果籃、平安塔），填上輓聯，金額會自動算好，按「儲存訂單」。</p>
+      <span class="tag">示範畫面・點圖可放大</span>
+      <button type="button" class="shot" data-src="img/step3.jpg"><img src="img/step3.jpg" alt="示範：選品項與填輓聯" loading="lazy"></button>
+    </div></li>
+    <li class="step"><span class="num">4</span><div>
+      <p class="say">核對確認單，按綠色的「<b>一鍵複製並開啟 LINE 傳送</b>」。</p>
+      <span class="tag">示範畫面・點圖可放大</span>
+      <button type="button" class="shot" data-src="img/step4.jpg"><img src="img/step4.jpg" alt="示範：客戶確認單" loading="lazy"></button>
+    </div></li>
+    <li class="step"><span class="num">5</span><div>
+      <p class="say">手機會自動打開重生禮儀的 LINE。按「<b>加入好友</b>」，在對話框長按、選「<b>貼上</b>」，再按送出，就訂好了。</p>
+      <div class="step-line"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.2 3 11.2c0 3.6 3.2 6.6 7.5 7.1l-.5 2.7 3.6-2.7c4.6-.4 7.4-3.4 7.4-7.1C21 7.2 17 4 12 4z"/></svg>訂單內容已經幫您複製好，不用自己打字。</div>
+    </div></li>
+    </ol>
+    <div class="promise">
+      <p class="big">文彥收到會立即回覆。</p>
+      <p>按下送出時，系統會同時寄一封通知信給我，不會漏單。</p>
+      <p class="small">沒有連結也沒關係，可以直接打電話或 LINE，告訴我們亡者姓名、告別式日期地點，以及想訂的品項。</p>
+      <p class="sign">重生禮儀 簡文彥</p>
+    </div>
+  </section>
+
+  <div class="intro">
+    <h2>範例與價錢</h2>
+    <p>以下為範例照片，點照片可以放大。實際品項與價格以訂購時確認為準。</p>
   </div>
 
   <section>
@@ -150,7 +202,7 @@
   // 點照片放大，點任何地方關閉
   var Z = document.getElementById('zoom'), ZI = Z.querySelector('img');
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('.item button');
+    var b = e.target.closest('.item button, .shot');
     if (b) { ZI.src = b.getAttribute('data-src'); ZI.alt = b.querySelector('img').alt; Z.classList.add('on'); return; }
     if (Z.classList.contains('on')) Z.classList.remove('on');
   });
