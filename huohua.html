@@ -87,15 +87,21 @@
   <section class="step">
     <h2><span class="n">1</span>選場所</h2>
     <div class="opts" id="places">
-      <button type="button" class="opt" data-site="shouyuan" aria-pressed="false">壽園火化</button>
-      <button type="button" class="opt" data-site="fuyuan" aria-pressed="false">福園火化</button>
-      <button type="button" class="opt" data-site="shouyuanhall" aria-pressed="false">壽園禮廳</button>
-      <button type="button" class="opt" data-site="fuyuanhall" aria-pressed="false">福園禮廳</button>
+      <button type="button" class="opt" data-place="shouyuan" aria-pressed="false">羅東壽園</button>
+      <button type="button" class="opt" data-place="fuyuan" aria-pressed="false">員山福園</button>
+    </div>
+  </section>
+
+  <section class="step" id="stepKind" hidden>
+    <h2><span class="n">2</span>選項目</h2>
+    <div class="opts" id="kinds">
+      <button type="button" class="opt" data-kind="" aria-pressed="false">火化</button>
+      <button type="button" class="opt" data-kind="hall" aria-pressed="false">禮廳</button>
     </div>
   </section>
 
   <section class="step" id="stepDate" hidden>
-    <h2><span class="n">2</span>選日期</h2>
+    <h2><span class="n">3</span>選日期</h2>
     <div class="date-row">
       <button type="button" class="opt day" data-add="0" aria-pressed="false">今天</button>
       <button type="button" class="opt day" data-add="1" aria-pressed="false">明天</button>
@@ -151,7 +157,8 @@
 
   var pad = function (n) { return (n < 10 ? "0" : "") + n; };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
-  var site = null, date = null, seq = 0;
+  // 場所、項目分開選（負責人 2026-10-14 指定），合起來就是代查程式的場所代號，例如 fuyuan + hall → fuyuanhall
+  var place = null, kind = null, site = null, date = null, seq = 0;
   var $ = function (id) { return document.getElementById(id); };
   var dateIn = $("dateIn"), box = $("result");
 
@@ -162,8 +169,12 @@
 
   function press(sel, el) { document.querySelectorAll(sel).forEach(function (b) { b.setAttribute("aria-pressed", b === el ? "true" : "false"); }); }
 
+  function pick() { site = (place && kind !== null) ? place + kind : null; run(); }
   document.querySelectorAll("#places .opt").forEach(function (b) {
-    b.addEventListener("click", function () { site = b.dataset.site; press("#places .opt", b); $("stepDate").hidden = false; run(); });
+    b.addEventListener("click", function () { place = b.dataset.place; press("#places .opt", b); $("stepKind").hidden = false; pick(); });
+  });
+  document.querySelectorAll("#kinds .opt").forEach(function (b) {
+    b.addEventListener("click", function () { kind = b.dataset.kind; press("#kinds .opt", b); $("stepDate").hidden = false; pick(); });
   });
   document.querySelectorAll(".opt.day").forEach(function (b) {
     b.addEventListener("click", function () { date = isoOf(addDays(+b.dataset.add)); dateIn.value = date; press(".opt.day", b); run(); });
