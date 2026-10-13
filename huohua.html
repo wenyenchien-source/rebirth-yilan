@@ -46,6 +46,7 @@
   .date-in { display: block; width: 100%; min-height: 52px; margin-top: 10px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); color: var(--sumi); font: inherit; font-size: 18px; }
   .hint { margin: 10px 0 0; font-size: 15px; color: var(--nezumi); }
 
+  .result + .result { margin-top: 16px; }
   .result { margin-top: 26px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--kaki); border-radius: 0 4px 4px 0; padding: 16px; }
   .result h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 20px; font-weight: 700; }
   .muted { color: var(--nezumi); font-size: 15px; }
@@ -95,9 +96,10 @@
   <section class="step" id="stepKind" hidden>
     <h2><span class="n">2</span>選項目</h2>
     <div class="opts" id="kinds">
-      <button type="button" class="opt" data-kind="" aria-pressed="false">火化</button>
-      <button type="button" class="opt" data-kind="hall" aria-pressed="false">禮廳</button>
+      <button type="button" class="opt" data-kind="" aria-pressed="true">火化</button>
+      <button type="button" class="opt" data-kind="hall" aria-pressed="true">禮廳</button>
     </div>
+    <p class="hint">兩個可以同時看；只想看一種，就把另一個按掉。</p>
   </section>
 
   <section class="step" id="stepDate" hidden>
@@ -112,6 +114,7 @@
   </section>
 
   <div class="result" id="result" hidden aria-live="polite"></div>
+  <div class="result" id="resultHall" hidden aria-live="polite"></div>
 
   <div class="contact">
     <div class="who">重生禮儀 簡文彥 0922-382533</div>
@@ -158,9 +161,10 @@
   var pad = function (n) { return (n < 10 ? "0" : "") + n; };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   // 場所、項目分開選（負責人 2026-10-14 指定），合起來就是代查程式的場所代號，例如 fuyuan + hall → fuyuanhall
-  var place = null, kind = null, site = null, date = null, seq = 0;
+  // 項目可複選、預設火化與禮廳都選，結果上下兩塊同時顯示（負責人 2026-10-14 指定）
+  var place = null, date = null, kinds = { "": true, "hall": true }, seqs = {};
   var $ = function (id) { return document.getElementById(id); };
-  var dateIn = $("dateIn"), box = $("result");
+  var dateIn = $("dateIn"), BOX = { "": $("result"), "hall": $("resultHall") };
 
   function isoOf(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
   function addDays(n) { var d = new Date(); d.setDate(d.getDate() + n); return d; }
@@ -169,12 +173,14 @@
 
   function press(sel, el) { document.querySelectorAll(sel).forEach(function (b) { b.setAttribute("aria-pressed", b === el ? "true" : "false"); }); }
 
-  function pick() { site = (place && kind !== null) ? place + kind : null; run(); }
   document.querySelectorAll("#places .opt").forEach(function (b) {
-    b.addEventListener("click", function () { place = b.dataset.place; press("#places .opt", b); $("stepKind").hidden = false; pick(); });
+    b.addEventListener("click", function () { place = b.dataset.place; press("#places .opt", b); $("stepKind").hidden = false; $("stepDate").hidden = false; run(); });
   });
   document.querySelectorAll("#kinds .opt").forEach(function (b) {
-    b.addEventListener("click", function () { kind = b.dataset.kind; press("#kinds .opt", b); $("stepDate").hidden = false; pick(); });
+    b.addEventListener("click", function () {
+      var k = b.dataset.kind; kinds[k] = !kinds[k]; b.setAttribute("aria-pressed", kinds[k] ? "true" : "false");
+      if (kinds[k]) runOne(k); else { seqs[k] = (seqs[k] || 0) + 1; BOX[k].hidden = true; }
+    });
   });
   document.querySelectorAll(".opt.day").forEach(function (b) {
     b.addEventListener("click", function () { date = isoOf(addDays(+b.dataset.add)); dateIn.value = date; press(".opt.day", b); run(); });
@@ -189,23 +195,25 @@
   function foot(s, at) {
     var n = new Date(at);
     return "<p class='muted'>查詢時間 " + pad(n.getHours()) + ":" + pad(n.getMinutes()) + "<br>以公所網頁為準，登記請自行至公所</p>" +
-      "<div class='acts'><button type='button' id='again'>重新查詢</button><a href='" + s.url + "' target='_blank' rel='noopener'>看官方網頁</a></div>";
+      "<div class='acts'><button type='button' class='again'>重新查詢</button><a href='" + s.url + "' target='_blank' rel='noopener'>看官方網頁</a></div>";
   }
 
-  function run(force) {
-    if (!site || !date) return;
-    var s = SITES[site], p = date.split("-").map(Number), md = p[1] + "/" + p[2];
+  function run() { runOne(""); runOne("hall"); }
+  function runOne(k, force) {
+    var box = BOX[k];
+    if (!kinds[k]) { box.hidden = true; return; }
+    if (!place || !date) return;
+    var site = place + k, s = SITES[site], p = date.split("-").map(Number), md = p[1] + "/" + p[2];
     var head = "<h3>" + s.title + " " + md + "</h3>";
-    var my = ++seq;
+    var my = seqs[k] = (seqs[k] || 0) + 1;
     box.hidden = false;
     box.innerHTML = head + "<p class='muted'>正在查詢…</p>";
+    var done = function (j) { if (my !== seqs[k]) return; show(box, s, md, head, p, j); box.querySelector(".again").addEventListener("click", function () { runOne(k, true); }); };
     fetch(API + "?site=" + site + "&date=" + date + (force ? "&_=" + Date.now() : ""), { cache: "no-store" })
-      .then(function (r) { return r.json(); })
-      .then(function (j) { if (my === seq) show(s, md, head, p, j); })
-      .catch(function () { if (my === seq) show(s, md, head, p, null); });
+      .then(function (r) { return r.json(); }).then(done).catch(function () { done(null); });
   }
 
-  function show(s, md, head, p, j) {
+  function show(box, s, md, head, p, j) {
     var c = dayClash(p[0], p[1], p[2]), html;
     if (!j || !j.ok) html = "<p class='busy'>目前查不到，請看官方網頁</p>";
     else if (j.closed) html = "<p class='busy'>" + esc(j.closed) + "，當天不開放</p>";
@@ -236,7 +244,6 @@
         (fixed ? "<th>已登記</th><th>空的時段</th>" : "<th>已登記時間</th>") + "</tr></thead><tbody>" + rows + "</tbody></table>";
     }
     box.innerHTML = head + html + foot(s, Date.now());
-    $("again").addEventListener("click", function () { run(true); });
   }
 })();
 </script>
