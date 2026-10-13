@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>火化・禮廳即時查詢｜重生禮儀</title>
+<meta name="description" content="宜蘭壽園、福園的火化爐與禮廳，選日期就能看到當天還有沒有空。資料即時取自公所公開網頁。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rebirth-yilan.vercel.app/huohua.html">
+<meta property="og:title" content="火化・禮廳即時查詢｜重生禮儀">
+<meta property="og:description" content="宜蘭壽園、福園的火化爐與禮廳，選日期就能看到當天還有沒有空。 聯絡 簡文彥 0922-382533">
+<meta property="og:image" content="https://rebirth-yilan.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="theme-color" content="#f7f4ef">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700;900&display=swap">
+<style>
+  /* 火化・禮廳即時查詢（負責人 2026-10-14 指定）；D-1a 和風，與其他頁一致 */
+  :root {
+    --washi: #f7f4ef; --paper: #ffffff; --line: #d9d2c7; --line-2: #e9e4dc;
+    --sumi: #2a2623; --nezumi: #6b645e; --kaki: #a5512c; --enji: #7e2f26;
+    --ok: #3d5a35; --ok-bg: #e4edde; --clash-bg: #f3d6d0;
+    --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+    --sans: "Noto Sans TC", "PingFang TC", "Heiti TC", sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--washi); color: var(--sumi); font-family: var(--sans); font-size: 17px; line-height: 1.7; }
+  .page { max-width: 720px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 8px) 20px calc(env(safe-area-inset-bottom) + 40px); }
+  .back { display: inline-flex; align-items: center; min-height: 48px; color: var(--nezumi); text-decoration: none; font-size: 15px; letter-spacing: 1px; }
+  .head { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .mark { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid var(--kaki); color: var(--kaki); font-family: var(--serif); font-weight: 900; font-size: 25px; line-height: 1; }
+  .brand { margin: 0 0 4px; font-family: var(--serif); font-size: 12px; letter-spacing: 6px; color: var(--kaki); line-height: 1; }
+  h1 { margin: 0; font-family: var(--serif); font-size: 22px; font-weight: 700; letter-spacing: 1px; line-height: 1.25; }
+  .lead { margin: 18px 0 0; font-size: 17px; }
+
+  .step { margin-top: 26px; }
+  .step h2 { margin: 0 0 10px; font-family: var(--serif); font-size: 20px; font-weight: 700; letter-spacing: 2px; }
+  .step h2 .n { color: var(--kaki); margin-right: 6px; }
+  .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .opt { min-height: 56px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); color: var(--sumi); font-family: var(--serif); font-size: 18px; font-weight: 700; letter-spacing: 1px; cursor: pointer; }
+  .opt[aria-pressed="true"] { background: var(--kaki); border-color: var(--kaki); color: #fff; }
+  .opt.day { font-size: 17px; }
+  .date-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .date-in { display: block; width: 100%; min-height: 52px; margin-top: 10px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); color: var(--sumi); font: inherit; font-size: 18px; }
+  .hint { margin: 10px 0 0; font-size: 15px; color: var(--nezumi); }
+
+  .result { margin-top: 26px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--kaki); border-radius: 0 4px 4px 0; padding: 16px; }
+  .result h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 20px; font-weight: 700; }
+  .muted { color: var(--nezumi); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 8px 0 10px; font-size: 17px; line-height: 1.5; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; word-break: break-word; }
+  thead th { background: var(--washi); font-size: 14px; color: var(--nezumi); }
+  tbody th { font-weight: 700; }
+  .free { color: var(--ok); font-weight: 700; }
+  .busy { color: var(--enji); font-weight: 700; }
+  .nb { white-space: nowrap; }
+  tr.clash th, tr.clash td, .clash-mark { background: var(--clash-bg); }
+  .clash-mark { color: var(--enji); border-radius: 2px; padding: 0 3px; }
+  .clash-banner { margin: 8px 0; padding: 8px 12px; background: var(--clash-bg); border: 1px solid var(--enji); border-radius: 3px; color: var(--enji); font-weight: 700; font-size: 16px; line-height: 1.5; }
+  .clash-note { display: block; font-size: 14px; color: var(--enji); font-weight: 700; }
+  .acts { display: flex; gap: 10px; margin-top: 10px; }
+  .acts a, .acts button { flex: 1; min-height: 50px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--kaki); background: var(--paper); color: var(--kaki); border-radius: 3px; font: inherit; font-family: var(--serif); font-size: 17px; font-weight: 700; text-decoration: none; cursor: pointer; }
+
+  .contact { margin-top: 34px; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+  .contact .who { text-align: center; font-family: var(--serif); font-size: 18px; font-weight: 700; letter-spacing: 2px; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; min-height: 52px; padding: 0 16px; border-radius: 3px; font-family: var(--serif); font-size: 17px; font-weight: 900; letter-spacing: 1px; text-decoration: none; }
+  .btn.call { background: #f4e7e3; color: var(--enji); border: 1px solid #c9a59d; }
+  .btn.line { background: #e4edde; color: #3d5a35; border: 1px solid #9db592; letter-spacing: 0; padding: 0 10px; }
+  .ico { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: square; }
+  footer { margin-top: 36px; text-align: center; font-family: var(--serif); font-size: 13px; letter-spacing: 6px; color: var(--nezumi); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--enji); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <a class="back" href="./">← 重生禮儀</a>
+  <div class="head">
+    <span class="mark" aria-hidden="true">查</span>
+    <div><p class="brand">重 生 禮 儀</p><h1>火化・禮廳即時查詢</h1></div>
+  </div>
+
+  <p class="lead">宜蘭壽園、福園的火化爐和禮廳，選好場所與日期，就能看到當天還有沒有空。資料即時取自公所公開網頁，不用登入。</p>
+
+  <section class="step">
+    <h2><span class="n">1</span>選場所</h2>
+    <div class="opts" id="places">
+      <button type="button" class="opt" data-site="shouyuan" aria-pressed="false">壽園火化</button>
+      <button type="button" class="opt" data-site="fuyuan" aria-pressed="false">福園火化</button>
+      <button type="button" class="opt" data-site="shouyuanhall" aria-pressed="false">壽園禮廳</button>
+      <button type="button" class="opt" data-site="fuyuanhall" aria-pressed="false">福園禮廳</button>
+    </div>
+  </section>
+
+  <section class="step" id="stepDate" hidden>
+    <h2><span class="n">2</span>選日期</h2>
+    <div class="date-row">
+      <button type="button" class="opt day" data-add="0" aria-pressed="false">今天</button>
+      <button type="button" class="opt day" data-add="1" aria-pressed="false">明天</button>
+      <button type="button" class="opt day" data-add="2" aria-pressed="false">後天</button>
+    </div>
+    <input type="date" class="date-in" id="dateIn" aria-label="選擇其他日期">
+    <p class="hint">也可以點上面的日期框，選其他日子。</p>
+  </section>
+
+  <div class="result" id="result" hidden aria-live="polite"></div>
+
+  <div class="contact">
+    <div class="who">重生禮儀 簡文彥 0922-382533</div>
+    <div class="btns">
+      <a class="btn call" href="tel:0922382533"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l1.5 4.5-2.5 1.5a11 11 0 0 0 6 6l1.5-2.5L20 15v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></svg>打電話</a>
+      <a class="btn line" href="https://line.me/ti/p/XF2bg2UUic" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.2 3 11.2c0 3.6 3.2 6.6 7.5 7.1l-.5 2.7 3.6-2.7c4.6-.4 7.4-3.4 7.4-7.1C21 7.2 17 4 12 4z"/></svg>加 LINE 詢問</a>
+    </div>
+  </div>
+  <footer>重 生 禮 儀</footer>
+</main>
+
+<script>
+(function () {
+  /* 代查程式：負責人的 Google Cloud 台灣機房（原始檔在 liyi-system 的 crem/index.js）。
+   * 只送出「場所代號＋日期」，回傳只有空爐數／各廳已登記時間，沒有任何姓名。 */
+  var API = "https://crem-check-822894287937.asia-east1.run.app/";
+  var SITES = {
+    shouyuan:     { title: "壽園火化", url: "https://mso.lotong.gov.tw/mso/calendar3.asp" },
+    fuyuan:       { title: "福園火化", url: "https://fes.e-land.gov.tw/yilanfunquery/outquery/firequery.aspx" },
+    shouyuanhall: { title: "壽園禮廳", url: "https://mso.lotong.gov.tw/mso/service503.asp" },
+    fuyuanhall:   { title: "福園禮廳", url: "https://fes.e-land.gov.tw/yilanfunquery/outquery/hallquery.aspx" }
+  };
+
+  /* ===== 日時對沖（與 liyi-system 殯奠吉課排定相同規則，負責人 2026-10-14 確認）=====
+   * 時辰地支與當天日柱地支相沖＝不適用火化；只在巳～酉時（火化場開 09～17 點）才標示。
+   * toJulianDay、dayGanzhiIndex 原封不動複製自 liyi-system/schedule/index.html（已驗證），不可改寫。 */
+  var BRANCHES = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+  var CHONG_BRANCH = { "子":"午","丑":"未","寅":"申","卯":"酉","辰":"戌","巳":"亥","午":"子","未":"丑","申":"寅","酉":"卯","戌":"辰","亥":"巳" };
+  function toJulianDay(y, m, d) {
+  if (m <= 2) { y -= 1; m += 12; }
+  var A = Math.floor(y / 100); var B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+  }
+  function dayGanzhiIndex(y, m, d) { return ((40 + Math.round(toJulianDay(y, m, d) - toJulianDay(1900, 1, 31))) % 60 + 60) % 60 + 1; }
+  function dayClash(y, m, d) {
+    var k = BRANCHES.indexOf(CHONG_BRANCH[BRANCHES[(dayGanzhiIndex(y, m, d) - 1) % 12]]);
+    if (k < 5 || k > 9) return null;                      // 不在巳～酉時，不顯示
+    return { idx: k, name: BRANCHES[k] + "時" };
+  }
+  function isClashHour(c, h) { return !!c && Math.floor((h + 1) / 2) % 12 === c.idx; }
+  function clashOverlap(c, from, to) { for (var h = from; h < to; h++) if (isClashHour(c, h)) return true; return false; }
+  function clashHours(c) { var hs = []; for (var h = 9; h <= 17; h++) if (isClashHour(c, h)) hs.push(h); return hs.join("、") + " 點"; }
+
+  var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var site = null, date = null, seq = 0;
+  var $ = function (id) { return document.getElementById(id); };
+  var dateIn = $("dateIn"), box = $("result");
+
+  function isoOf(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function addDays(n) { var d = new Date(); d.setDate(d.getDate() + n); return d; }
+  dateIn.min = isoOf(new Date());
+  dateIn.max = isoOf(addDays(365));
+
+  function press(sel, el) { document.querySelectorAll(sel).forEach(function (b) { b.setAttribute("aria-pressed", b === el ? "true" : "false"); }); }
+
+  document.querySelectorAll("#places .opt").forEach(function (b) {
+    b.addEventListener("click", function () { site = b.dataset.site; press("#places .opt", b); $("stepDate").hidden = false; run(); });
+  });
+  document.querySelectorAll(".opt.day").forEach(function (b) {
+    b.addEventListener("click", function () { date = isoOf(addDays(+b.dataset.add)); dateIn.value = date; press(".opt.day", b); run(); });
+  });
+  dateIn.addEventListener("change", function () {
+    if (!dateIn.value) return;
+    date = dateIn.value;
+    var hit = null; document.querySelectorAll(".opt.day").forEach(function (b) { if (isoOf(addDays(+b.dataset.add)) === date) hit = b; });
+    press(".opt.day", hit); run();
+  });
+
+  function foot(s, at) {
+    var n = new Date(at);
+    return "<p class='muted'>查詢時間 " + pad(n.getHours()) + ":" + pad(n.getMinutes()) + "<br>以公所網頁為準，登記請自行至公所</p>" +
+      "<div class='acts'><button type='button' id='again'>重新查詢</button><a href='" + s.url + "' target='_blank' rel='noopener'>看官方網頁</a></div>";
+  }
+
+  function run(force) {
+    if (!site || !date) return;
+    var s = SITES[site], p = date.split("-").map(Number), md = p[1] + "/" + p[2];
+    var head = "<h3>" + s.title + " " + md + "</h3>";
+    var my = ++seq;
+    box.hidden = false;
+    box.innerHTML = head + "<p class='muted'>正在查詢…</p>";
+    fetch(API + "?site=" + site + "&date=" + date + (force ? "&_=" + Date.now() : ""), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (my === seq) show(s, md, head, p, j); })
+      .catch(function () { if (my === seq) show(s, md, head, p, null); });
+  }
+
+  function show(s, md, head, p, j) {
+    var c = dayClash(p[0], p[1], p[2]), html;
+    if (!j || !j.ok) html = "<p class='busy'>目前查不到，請看官方網頁</p>";
+    else if (j.closed) html = "<p class='busy'>" + esc(j.closed) + "，當天不開放</p>";
+    else if (j.hours) {                                         // 火化：09～17 每個整點
+      html = (c ? "<div class='clash-banner'>⚠ 本日" + c.name + "日時對沖，<span class='nb'>" + clashHours(c) + "</span> <span class='nb'>不適用火化</span></div>" : "") +
+        "<table><colgroup><col style='width:5em'><col></colgroup><thead><tr><th>時間</th><th>空爐</th></tr></thead><tbody>" +
+        Object.keys(j.hours).sort().map(function (k) {
+          var v = j.hours[k], cl = isClashHour(c, +k);
+          return "<tr" + (cl ? " class='clash'" : "") + "><th>" + k + ":00</th><td>" +
+            (v.free > 0 ? "<span class='free'>還有 " + v.free + " 爐</span>（共 " + v.total + " 爐）" : "<span class='busy'>已滿</span>") +
+            (cl ? "<span class='clash-note'>日時對沖，不適用火化</span>" : "") + "</td></tr>";
+        }).join("") + "</tbody></table>";
+    } else {                                                    // 禮廳：跟系統一樣的表格
+      var fixed = j.halls.some(function (h) { return h.slots; });
+      var mark = function (t, a, b) { return "<span class='nb" + (a !== null && clashOverlap(c, a, b) ? " clash-mark" : "") + "'>" + t + "</span>"; };
+      var rows = j.halls.map(function (h) {
+        var name = "<th>" + esc(h.name) + "</th>";
+        if (fixed) {
+          var sp = function (sl) { return mark(pad(sl.from) + "–" + pad(sl.to), sl.from, sl.to); };
+          var busy = h.slots.filter(function (sl) { return sl.booked; }).map(sp), free = h.slots.filter(function (sl) { return !sl.booked; }).map(sp);
+          return "<tr>" + name + "<td class='busy'>" + (busy.join("<br>") || "—") + "</td><td class='free'>" + (free.join("<br>") || "—") + "</td></tr>";
+        }
+        if (!h.booked.length) return "<tr>" + name + "<td class='free'>整天空</td></tr>";
+        return "<tr>" + name + "<td class='busy'>" + h.booked.map(function (b) { return b[0] === null ? mark("時間不詳", null) : mark(b[0] + "–" + b[1], b[0], b[1]); }).join("、") + "</td></tr>";
+      }).join("");
+      html = (c ? "<div class='clash-banner'>⚠ 本日" + c.name + "日時對沖，<span class='nb'>" + clashHours(c) + "</span> <span class='nb'>不適用火化</span></div>" : "") +
+        "<table><colgroup><col style='width:" + (fixed ? "5em" : "3.8em") + "'><col>" + (fixed ? "<col>" : "") + "</colgroup><thead><tr><th>廳</th>" +
+        (fixed ? "<th>已登記</th><th>空的時段</th>" : "<th>已登記時間</th>") + "</tr></thead><tbody>" + rows + "</tbody></table>";
+    }
+    box.innerHTML = head + html + foot(s, Date.now());
+    $("again").addEventListener("click", function () { run(true); });
+  }
+})();
+</script>
+</body>
+</html>
