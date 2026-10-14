@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>梅園塔位方位查詢｜重生禮儀</title>
-<meta name="description" content="輸入冬山梅園塔位號碼，查出坐東、坐西、坐南或坐北。">
+<title>梅園塔位方位查詢</title>
+<meta name="description" content="輸入冬山梅園塔位或牌位號碼，查出坐東、坐西、坐南或坐北。">
+<meta name="theme-color" content="#f7f4ef">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rebirth-yilan.vercel.app/meiyuan.html">
 <meta property="og:title" content="梅園塔位方位查詢｜重生禮儀">
-<meta property="og:description" content="輸入冬山梅園塔位號碼，查出坐東、坐西、坐南或坐北。 聯絡 簡文彥 0922-382533">
+<meta property="og:description" content="輸入冬山梅園塔位或牌位號碼，查出坐東、坐西、坐南或坐北。 聯絡 簡文彥 0922-382533">
 <meta property="og:image" content="https://rebirth-yilan.vercel.app/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="theme-color" content="#f7f4ef">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700;900&display=swap">
 <style>
-  /* 梅園塔位方位查詢（負責人 2026-10-14 併入）：功能與對照表照原工具，外觀改為 D-1a 和風；負責人要求簡單介面，不放「坐向」小字、四格坐向與聯絡區 */
+  /* 外觀沿用重生禮儀「梅園塔位方位查詢」頁（D-1a 和風）；功能與對照表依現行規則。 */
   :root {
     --washi: #f7f4ef; --paper: #ffffff; --line: #d9d2c7; --line-2: #e9e4dc;
     --sumi: #2a2623; --nezumi: #6b645e; --kaki: #a5512c; --enji: #7e2f26;
@@ -35,9 +35,15 @@
   .lead { margin: 18px 0 0; font-size: 17px; }
 
   .card { margin-top: 22px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--kaki); border-radius: 0 4px 4px 0; padding: 18px 16px; }
+
+  .seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .seg-btn { min-height: 48px; border: 0; background: var(--washi); color: var(--nezumi); font-family: var(--serif); font-size: 17px; font-weight: 700; letter-spacing: 2px; cursor: pointer; }
+  .seg-btn + .seg-btn { border-left: 1px solid var(--line); }
+  .seg-btn[aria-pressed="true"] { background: var(--enji); color: #fff; }
+
   label { display: block; margin-bottom: 8px; font-family: var(--serif); font-size: 18px; font-weight: 700; letter-spacing: 1px; }
   input { display: block; width: 100%; min-height: 52px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--washi); color: var(--sumi); font: inherit; font-size: 20px; letter-spacing: 2px; }
-  .primary { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; margin-top: 12px; border: 0; border-radius: 3px; background: var(--enji); color: #fff; font-family: var(--serif); font-size: 19px; font-weight: 900; letter-spacing: 3px; cursor: pointer; }  /* 主要按鈕＝臙脂（負責人指定配色） */
+  .primary { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; margin-top: 12px; border: 0; border-radius: 3px; background: var(--enji); color: #fff; font-family: var(--serif); font-size: 19px; font-weight: 900; letter-spacing: 3px; cursor: pointer; }
   .hint { margin: 8px 0 0; font-size: 15px; color: var(--nezumi); }
   .warn { margin: 12px 0 0; padding: 8px 12px; background: #f4e7e3; border: 1px solid #c9a59d; border-radius: 3px; color: var(--enji); font-size: 16px; font-weight: 700; }
 
@@ -49,6 +55,7 @@
   summary { cursor: pointer; min-height: 52px; display: flex; align-items: center; font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--kaki); }
   .group { margin: 12px 0 0; }
   .group h2 { margin: 0 0 6px; font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  .group h3 { margin: 10px 0 6px; font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--nezumi); }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chips span { font-variant-numeric: tabular-nums; font-size: 15px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--washi); }
   .note { margin: 18px 0 0; font-size: 14px; color: var(--nezumi); }
@@ -60,20 +67,26 @@
 </head>
 <body>
 <main class="page">
-  <a class="back" href="./">← 重生禮儀</a>
+  <a class="back" href="https://rebirth-yilan.vercel.app/">← 重生禮儀</a>
   <div class="head">
     <span class="mark" aria-hidden="true">梅</span>
     <div><p class="brand">重 生 禮 儀</p><h1>梅園塔位方位查詢</h1></div>
   </div>
 
-  <p class="lead">輸入冬山梅園的塔位號碼，即可查出坐向。</p>
+  <p class="lead">輸入冬山梅園的塔位或牌位號碼，即可查出坐向。</p>
 
   <div class="card">
+    <div class="seg" role="group" aria-label="號碼類型">
+      <button type="button" class="seg-btn" data-type="塔位" aria-pressed="true">塔位</button>
+      <button type="button" class="seg-btn" data-type="牌位" aria-pressed="false">牌位</button>
+    </div>
+
     <form id="f" autocomplete="off">
-      <label for="code">塔位號碼</label>
+      <label id="lbl" for="code">塔位號碼</label>
       <input id="code" name="code" inputmode="text" autocapitalize="characters" spellcheck="false"
              placeholder="例如 1E0612xxxx" maxlength="20">
       <button type="submit" class="primary">查詢坐向</button>
+      <p class="hint">只需前 4–6 碼即可查詢。</p>
     </form>
 
     <p id="err" class="warn" hidden></p>
@@ -90,16 +103,15 @@
     </details>
   </div>
 
-  <p class="note">對照表依提供之梅園塔位清單整理。1E06 與 1E0612 等較長的號碼優先比對，所以先看 6 碼，再看 4 碼。</p>
+  <p class="note">對照表依提供之梅園塔位清單整理。1E06 與 1E0612 等較長的號碼優先比對，所以先看 6 碼，再看 4 碼。牌位區的號碼為 2E 開頭。</p>
 
   <footer>重 生 禮 儀</footer>
 </main>
 
 <script>
-/* 以下功能與對照表照搬負責人原本的「梅園塔位方位查詢」（2026-10-14），對照表不可自行增改。 */
 const DIRS = ["坐東", "坐西", "坐南", "坐北"];
 
-const DATA = {
+const TOWER = {
   "坐東": ["1A01","1A03","1C01","1C03","1C06","1C08","1C10",
            "1E01","1E03","1E06","1E08","1E10","1E12","1E15","1E17","1E19",
            "1F01","1F03","1F06","1F08","1F10","1F12","1F15","1F17","1F19"],
@@ -111,17 +123,31 @@ const DATA = {
   "坐北": ["1D02","1D05","1D07","1D09","1D11","1D13"]
 };
 
-const MAP = new Map();
-for (const dir of DIRS) for (const key of DATA[dir]) MAP.set(key, dir);
+const SHRINE = {
+  "坐東": ["2E01"],
+  "坐西": ["2E03"],
+  "坐南": [],
+  "坐北": ["2E02"]
+};
+
+const TABLES = { "塔位": TOWER, "牌位": SHRINE };
+const MAPS = { "塔位": new Map(), "牌位": new Map() };
+for (const type of Object.keys(TABLES)) {
+  for (const dir of DIRS) for (const key of TABLES[type][dir]) MAPS[type].set(key, dir);
+}
+
+let mode = "塔位";
 
 function normalize(s) {
   return s.toUpperCase().replace(/[\s\-‐－]/g, "").replace(/I/g, "1");
 }
 
-function lookup(code) {
+function lookup(code, type) {
   for (let n = 6; n >= 4; n--) {
     const prefix = code.slice(0, n);
-    if (prefix.length === n && MAP.has(prefix)) return { dir: MAP.get(prefix), key: prefix };
+    if (prefix.length === n && MAPS[type].has(prefix)) {
+      return { dir: MAPS[type].get(prefix), key: prefix, type };
+    }
   }
   return null;
 }
@@ -134,43 +160,69 @@ function show(id, text) {
   el.hidden = !text;
 }
 
-function render(dir, key) {
+function setMode(type) {
+  mode = type;
+  for (const b of document.querySelectorAll(".seg-btn")) {
+    b.setAttribute("aria-pressed", b.dataset.type === type ? "true" : "false");
+  }
+  $("lbl").textContent = type + "號碼";
+  $("code").placeholder = type === "塔位" ? "例如 1E0612xxxx" : "例如 2E03xxxx";
+  show("err", "");
+  show("len", "");
+  $("out").hidden = true;
+}
+
+function render(dir, key, type) {
   $("dir").textContent = dir;
-  $("basis").textContent = "依前綴 " + key + " 判定";
+  $("basis").textContent = type + "・依前綴 " + key + " 判定";
   $("out").hidden = false;
 }
 
 function buildAll() {
   const all = $("all");
   all.replaceChildren();
-  for (const dir of DIRS) {
-    const g = document.createElement("div");
-    g.className = "group";
-    const h = document.createElement("h2");
-    h.textContent = dir + "（" + DATA[dir].length + " 組）";
-    const chips = document.createElement("div");
-    chips.className = "chips";
-    for (const key of DATA[dir]) {
-      const s = document.createElement("span");
-      s.textContent = key;
-      chips.appendChild(s);
+  for (const type of ["塔位", "牌位"]) {
+    const src = TABLES[type];
+    const count = DIRS.reduce((n, d) => n + src[d].length, 0);
+    const sec = document.createElement("div");
+    sec.className = "group";
+    const sh = document.createElement("h2");
+    sh.textContent = type + "區（" + count + " 組）";
+    sec.appendChild(sh);
+    for (const dir of DIRS) {
+      if (!src[dir].length) continue;
+      const g = document.createElement("div");
+      g.className = "group";
+      const h = document.createElement("h3");
+      h.textContent = dir + "（" + src[dir].length + " 組）";
+      const chips = document.createElement("div");
+      chips.className = "chips";
+      for (const key of src[dir]) {
+        const s = document.createElement("span");
+        s.textContent = key;
+        chips.appendChild(s);
+      }
+      g.append(h, chips);
+      sec.appendChild(g);
     }
-    g.append(h, chips);
-    all.appendChild(g);
+    all.appendChild(sec);
   }
+}
+
+for (const b of document.querySelectorAll(".seg-btn")) {
+  b.addEventListener("click", () => setMode(b.dataset.type));
 }
 
 $("f").addEventListener("submit", (e) => {
   e.preventDefault();
-  const raw = $("code").value;
-  const code = normalize(raw);
+  const code = normalize($("code").value);
 
   show("err", "");
   show("len", "");
   $("out").hidden = true;
 
   if (!code) {
-    show("err", "請輸入塔位號碼。");
+    show("err", "請輸入" + mode + "號碼。");
     return;
   }
   if (!/^[A-F0-9]+$/.test(code)) {
@@ -182,16 +234,21 @@ $("f").addEventListener("submit", (e) => {
     return;
   }
 
-  const hit = lookup(code);
+  const hit = lookup(code, mode);
   if (!hit) {
-    show("err", "查無此塔位的坐向資料，請確認號碼前 4–6 碼是否正確。");
+    const other = mode === "塔位" ? "牌位" : "塔位";
+    if (lookup(code, other)) {
+      show("err", "此號碼屬於" + other + "，請先切換到「" + other + "」再查詢。");
+    } else {
+      show("err", "查無此" + mode + "的坐向資料，請確認號碼前 4–6 碼是否正確。");
+    }
     return;
   }
 
   if (code.length < 8 || code.length > 10) {
     show("len", "一般號碼為 8–10 碼，目前輸入 " + code.length + " 碼，請確認是否完整。");
   }
-  render(hit.dir, hit.key);
+  render(hit.dir, hit.key, hit.type);
 });
 
 buildAll();
