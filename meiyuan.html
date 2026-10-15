@@ -16,6 +16,10 @@
 <meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700;900&display=swap">
+<script>
+  // 嵌入模式（網址帶 ?embed=1）：由負責人自己的內部系統嵌入顯示時用，藏起「← 重生禮儀」與頁尾（負責人 2026-10-15 指定）
+  if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add('embed');
+</script>
 <style>
   /* 外觀沿用重生禮儀「梅園塔位方位查詢」頁（D-1a 和風）；功能與對照表依現行規則。 */
   :root {
@@ -64,6 +68,9 @@
   footer { margin-top: 36px; text-align: center; font-family: var(--serif); font-size: 13px; letter-spacing: 6px; color: var(--nezumi); }
   a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--enji); outline-offset: 2px; }
   [hidden] { display: none !important; }
+  html.embed body { background: transparent; }
+  html.embed .back, html.embed footer { display: none; }
+  html.embed .page { padding: 0 0 8px; }
 </style>
 </head>
 <body>
@@ -290,6 +297,15 @@ $("f").addEventListener("submit", (e) => {
 });
 
 buildAll();
+
+// 嵌入模式：把頁面高度告訴外層，讓外層框架跟著長高，不會出現框中框的捲動
+if (document.documentElement.classList.contains('embed') && window.parent !== window) {
+  // 用內容本身的高度（不是框的高度），對照表展開、收起時外框才會跟著變
+  const postHeight = () => window.parent.postMessage({ meiyuanHeight: Math.ceil(document.querySelector('.page').getBoundingClientRect().height) }, '*');
+  new ResizeObserver(postHeight).observe(document.body);
+  window.addEventListener('load', postHeight);
+  postHeight();
+}
 </script>
 </body>
 </html>
