@@ -94,7 +94,7 @@
       <input id="code" name="code" inputmode="text" autocapitalize="characters" spellcheck="false"
              placeholder="例如 1E0612xxxx" maxlength="20">
       <button type="submit" class="primary">查詢坐向</button>
-      <p class="hint">只需前 4–6 碼即可查詢。</p>
+      <p class="hint">只需前 4–6 碼即可查詢；一樓牌位（1B 開頭）請輸入前 8 碼。</p>
     </form>
 
     <p id="err" class="warn" hidden></p>
@@ -111,7 +111,7 @@
     </details>
   </div>
 
-  <p class="note">對照表依提供之梅園塔位清單整理。1E06 與 1E0612 等較長的號碼優先比對，所以先看 6 碼，再看 4 碼。牌位區的號碼為 2E 開頭。</p>
+  <p class="note">對照表依提供之梅園塔位清單整理。1E06 與 1E0612 等較長的號碼優先比對，所以先看 6 碼，再看 4 碼。牌位區的號碼為 1B（一樓）與 2E 開頭；一樓牌位同一排分屬兩個方向，所以要看前 8 碼。</p>
 
   <footer>重 生 禮 儀</footer>
 </main>
@@ -175,6 +175,44 @@ const SHRINE = {
   "坐北": ["2E02"]
 };
 
+// 一樓牌位區（1B 開頭，負責人 2026-10-16 提供手寫「一樓牌位」表）
+// 同一排會分屬兩個方向（例如 1B0101 的 01–20 坐東、21–26 坐南），所以要看到第 8 碼。
+// 寫法「排:起-迄」，例 "0101:21-26" ＝ 1B010121～1B010126。
+// 手寫表「東南（南）」＝坐東南偏南，記為坐南；西北（北）＝西北偏北、東北（東）＝東北偏東、西南（西）＝西南偏西（負責人 2026-10-16 說明）。
+// 手寫不清的兩處依前後排對照判讀並經負責人確認：1B011223-230、1B030507-513。
+const SHRINE_1B = [
+  { dir: "坐南", label: "東南偏南", rows:
+    "0101:21-26 0102:22-28 0103:22-28 0105:22-29 0106:23-30 0107:23-30 0108:21-26 " +
+    "0109:22-28 0110:22-28 0111:22-29 0112:23-30 0113:23-30 " +
+    "0201:01-07 0202:01-07 0203:01-08 0205:01-08 0206:01-09 0207:01-09 0208:01-07 " +
+    "0209:01-07 0210:01-08 0211:01-08 0212:01-09 0213:01-09" },
+  { dir: "坐北", label: "西北偏北", rows:
+    "0301:06-11 0302:06-11 0303:07-13 0305:07-13 0306:07-15 0307:08-16 0308:06-11 " +
+    "0309:06-11 0310:07-13 0311:07-13 0312:07-15 0313:08-16 " +
+    "0501:01-06 0502:01-07 0503:01-07 0505:01-08 0506:01-08 0507:01-08 0508:01-06 " +
+    "0509:01-07 0510:01-07 0511:01-08 0512:01-08 0513:01-08" },
+  { dir: "坐東", label: "東北偏東", rows:
+    "0101:01-20 0102:01-21 0103:01-21 0105:01-21 0106:01-22 0107:01-22 0108:01-20 " +
+    "0109:01-21 0110:01-21 0111:01-21 0112:01-22 0113:01-22 " +
+    "0501:07-10 0502:08-11 0503:08-12 0505:09-13 0506:09-13 0507:09-15 0508:07-10 " +
+    "0509:08-11 0510:08-12 0511:09-13 0512:09-13 0513:09-15" },
+  { dir: "坐西", label: "西南偏西", rows:
+    "0201:08-27 0202:08-28 0203:09-29 0205:09-30 0206:10-31 0207:10-31 0208:08-27 " +
+    "0209:08-28 0210:09-29 0211:09-30 0212:10-31 0213:10-31 " +
+    "0301:01-05 0302:01-05 0303:01-06 0305:01-06 0306:01-06 0307:01-07 0308:01-05 " +
+    "0309:01-05 0310:01-06 0311:01-06 0312:01-06 0313:01-07" }
+];
+// 展開成 { "1B0101": [{ from, to, dir, label }, …] }
+const RANGES_1B = {};
+for (const g of SHRINE_1B) {
+  for (const item of g.rows.split(" ")) {
+    const [row, span] = item.split(":");
+    const [from, to] = span.split("-").map(Number);
+    (RANGES_1B["1B" + row] = RANGES_1B["1B" + row] || []).push({ from, to, dir: g.dir, label: g.label, row });
+  }
+}
+const pad2 = (n) => String(n).padStart(2, "0");
+
 const TABLES = { "塔位": TOWER, "牌位": SHRINE };
 const MAPS = { "塔位": new Map(), "牌位": new Map() };
 for (const type of Object.keys(TABLES)) {
@@ -188,6 +226,17 @@ function normalize(s) {
 }
 
 function lookup(code, type) {
+  // 一樓牌位 1B：看前 6 碼找排，再看第 7–8 碼落在哪一段
+  if (type === "牌位" && code.startsWith("1B")) {
+    const list = RANGES_1B[code.slice(0, 6)];
+    if (!list) return null;
+    if (code.length < 8) return { need8: true, type };
+    const n = Number(code.slice(6, 8));
+    const r = list.find((x) => n >= x.from && n <= x.to);
+    if (!r) return null;
+    const head = "1B" + r.row;
+    return { dir: r.dir, key: head + pad2(r.from) + "～" + head + pad2(r.to), type, label: r.label };
+  }
   for (let n = 6; n >= 4; n--) {
     const prefix = code.slice(0, n);
     if (prefix.length === n && MAPS[type].has(prefix)) {
@@ -211,15 +260,17 @@ function setMode(type) {
     b.setAttribute("aria-pressed", b.dataset.type === type ? "true" : "false");
   }
   $("lbl").textContent = type + "號碼";
-  $("code").placeholder = type === "塔位" ? "例如 1E0612xxxx" : "例如 2E03xxxx";
+  $("code").placeholder = type === "塔位" ? "例如 1E0612xxxx" : "例如 1B010125xx 或 2E03xxxx";
   show("err", "");
   show("len", "");
   $("out").hidden = true;
 }
 
-function render(dir, key, type) {
+function render(dir, key, type, label) {
   $("dir").textContent = dir;
-  $("basis").textContent = type + "・依前綴 " + key + " 判定";
+  $("basis").textContent = label
+    ? type + "・坐" + label + "・依 " + key + " 判定"
+    : type + "・依前綴 " + key + " 判定";
   $("out").hidden = false;
 }
 
@@ -228,21 +279,32 @@ function buildAll() {
   all.replaceChildren();
   for (const type of ["塔位", "牌位"]) {
     const src = TABLES[type];
-    const count = DIRS.reduce((n, d) => n + src[d].length, 0);
+    // 牌位另外列出一樓 1B 的號碼範圍（例「1B010121～26」）
+    const extra = {};
+    for (const d of DIRS) extra[d] = [];
+    if (type === "牌位") {
+      for (const g of SHRINE_1B) for (const item of g.rows.split(" ")) {
+        const [row, span] = item.split(":");
+        const [f, t] = span.split("-");
+        extra[g.dir].push("1B" + row + f + "～" + t);
+      }
+    }
+    const count = DIRS.reduce((n, d) => n + src[d].length + extra[d].length, 0);
     const sec = document.createElement("div");
     sec.className = "group";
     const sh = document.createElement("h2");
     sh.textContent = type + "區（" + count + " 組）";
     sec.appendChild(sh);
     for (const dir of DIRS) {
-      if (!src[dir].length) continue;
+      const keys = extra[dir].concat(src[dir]);
+      if (!keys.length) continue;
       const g = document.createElement("div");
       g.className = "group";
       const h = document.createElement("h3");
-      h.textContent = dir + "（" + src[dir].length + " 組）";
+      h.textContent = dir + "（" + keys.length + " 組）";
       const chips = document.createElement("div");
       chips.className = "chips";
-      for (const key of src[dir]) {
+      for (const key of keys) {
         const s = document.createElement("span");
         s.textContent = key;
         chips.appendChild(s);
@@ -285,15 +347,19 @@ $("f").addEventListener("submit", (e) => {
     if (lookup(code, other)) {
       show("err", "此號碼屬於" + other + "，請先切換到「" + other + "」再查詢。");
     } else {
-      show("err", "查無此" + mode + "的坐向資料，請確認號碼前 4–6 碼是否正確。");
+      show("err", "查無此" + mode + "的坐向資料，請確認號碼前 " + (code.startsWith("1B") ? "8" : "4–6") + " 碼是否正確。");
     }
+    return;
+  }
+  if (hit.need8) {
+    show("err", "一樓牌位（1B 開頭）同一排分屬兩個方向，請輸入前 8 碼，例如 1B010125。");
     return;
   }
 
   if (code.length < 8 || code.length > 10) {
     show("len", "一般號碼為 8–10 碼，目前輸入 " + code.length + " 碼，請確認是否完整。");
   }
-  render(hit.dir, hit.key, hit.type);
+  render(hit.dir, hit.key, hit.type, hit.label);
 });
 
 buildAll();
