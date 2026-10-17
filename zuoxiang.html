@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex">  <!-- 負責人 2026-10-14：首頁不放卡片，只給拿到網址的人用 -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>梅園塔位方位查詢</title>
+<title>塔位牌位方位查詢｜重生禮儀</title>
 <meta name="description" content="輸入冬山梅園塔位或牌位號碼，查出坐東、坐西、坐南或坐北。">
 <meta name="theme-color" content="#f7f4ef">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rebirth-yilan.vercel.app/zuoxiang.html">
-<meta property="og:title" content="梅園塔位方位查詢｜重生禮儀">
+<meta property="og:title" content="塔位牌位方位查詢｜重生禮儀">
 <meta property="og:description" content="輸入冬山梅園塔位或牌位號碼，查出坐東、坐西、坐南或坐北。 聯絡 簡文彥 0922-382533">
 <meta property="og:image" content="https://rebirth-yilan.vercel.app/og.png">
 <meta property="og:image:width" content="1200">
@@ -88,7 +88,7 @@
   <a class="back" href="https://rebirth-yilan.vercel.app/">← 重生禮儀</a>
   <div class="head">
     <span id="mark" class="mark" aria-hidden="true">梅</span>
-    <div><p class="brand">重 生 禮 儀</p><h1 id="pageTitle">梅園塔位方位查詢</h1></div>
+    <div><p class="brand">重 生 禮 儀</p><h1 id="pageTitle">塔位牌位方位查詢</h1></div>
   </div>
 
   <div class="parks" role="group" aria-label="園區">
@@ -620,7 +620,7 @@ function setPark(p) {
 
 const DEFAULTS = {
   lead: $("lead").textContent, note: $("note").textContent, hint: $("hint").textContent,
-  title: $("pageTitle").textContent, mark: $("mark").textContent, docTitle: document.title
+  title: "梅園塔位方位查詢", mark: "梅", docTitle: "梅園塔位方位查詢"
 };
 for (const b of document.querySelectorAll(".park[data-park]")) {
   b.addEventListener("click", () => setPark(b.dataset.park));
