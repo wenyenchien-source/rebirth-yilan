@@ -21,7 +21,7 @@
   /* 代訂範例：照片＋品名＋價錢，點照片放大；D-1a 和風 */
   :root {
     --washi: #f7f4ef; --paper: #ffffff; --line: #d9d2c7; --line-2: #e9e4dc;
-    --sumi: #2a2623; --nezumi: #6b645e; --kaki: #a5512c; --enji: #7e2f26; --line-green: #06c755;
+    --sumi: #2a2623; --nezumi: #6b645e; --kaki: #5a4d94; --enji: #7e2f26; --ai: #2a1b5c;  /* 公開網站跟 LOGO 一致：中紫＝標記、已選取；深紫藍＝主要按鈕、重點字；臙脂只留給已滿／沖煞／警告 */ --line-green: #06c755;
     --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
     --sans: "Noto Sans TC", "PingFang TC", "Heiti TC", sans-serif;
   }
@@ -42,14 +42,14 @@
   .step { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
   .num { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--kaki); color: var(--kaki); font-family: var(--serif); font-weight: 900; font-size: 20px; line-height: 1; background: var(--paper); }
   .say { margin: 6px 0 10px; font-size: 18px; line-height: 1.65; }
-  .say b { color: var(--enji); font-weight: 900; }
+  .say b { color: var(--ai); font-weight: 900; }
   .shot { position: relative; display: block; width: 100%; max-width: 280px; padding: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--paper); cursor: zoom-in; box-shadow: 0 1px 0 var(--line-2); }
   .shot img { display: block; width: 100%; height: auto; }
   .tag { display: block; max-width: 280px; margin: 0 0 4px; font-size: 13px; letter-spacing: 2px; color: var(--nezumi); }
   .step-line { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 12px 14px; background: #e4edde; border: 1px solid #9db592; border-radius: 3px; color: #3d5a35; font-size: 16px; }
-  .promise { margin-top: 26px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--enji); border-radius: 0 4px 4px 0; padding: 16px 18px; }
+  .promise { margin-top: 26px; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--ai); border-radius: 0 4px 4px 0; padding: 16px 18px; }
   .promise p { margin: 6px 0; }
-  .promise .big { font-family: var(--serif); font-size: 20px; font-weight: 900; color: var(--enji); letter-spacing: 1px; }
+  .promise .big { font-family: var(--serif); font-size: 20px; font-weight: 900; color: var(--ai); letter-spacing: 1px; }
   .promise .small { font-size: 15px; color: var(--nezumi); }
   .sign { text-align: right; font-family: var(--serif); font-size: 15px; color: var(--nezumi); }
   .intro { margin: 40px 0 0; padding-top: 22px; border-top: 1px solid var(--line); }
@@ -65,7 +65,7 @@
   .item img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
   .item figcaption { padding: 10px 12px 12px; }
   .item b { display: block; font-family: var(--serif); font-size: 16px; font-weight: 700; line-height: 1.4; }
-  .item .price { display: block; font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--enji); margin-top: 2px; }
+  .item .price { display: block; font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--ai); margin-top: 2px; }
   .item.wide { grid-column: 1 / -1; }
   .item.wide img { aspect-ratio: auto; object-fit: contain; }
 
@@ -73,7 +73,7 @@
   .contact .who { text-align: center; font-family: var(--serif); font-size: 18px; font-weight: 700; letter-spacing: 2px; }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn { flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; min-height: 52px; padding: 0 16px; border-radius: 3px; font-family: var(--serif); font-size: 17px; font-weight: 900; letter-spacing: 1px; text-decoration: none; }
-  .btn.call { background: #f4e7e3; color: var(--enji); border: 1px solid #c9a59d; }  /* 淡臙脂底・深紅字（負責人選 R1） */
+  .btn.call { background: #ebe7f3; color: var(--ai); border: 1px solid #b4aad3; }  /* 淡紫底・深紫藍字（原 R1 淡紅，改成跟 LOGO 一致） */
   .btn.line { background: #e4edde; color: #3d5a35; border: 1px solid #9db592; letter-spacing: 0; padding: 0 10px; }  /* 淡綠底・深綠字（負責人選 B2） */
   .ico { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: square; }
 
@@ -82,7 +82,7 @@
   #zoom img { max-width: 100%; max-height: 100%; border-radius: 3px; }
   #zoom button { position: absolute; top: calc(env(safe-area-inset-top) + 10px); right: 12px; width: 48px; height: 48px; border: 0; border-radius: 3px; background: rgba(255,255,255,.9); color: var(--sumi); font-size: 22px; }
   footer { margin-top: 36px; text-align: center; font-family: var(--serif); font-size: 13px; letter-spacing: 6px; color: var(--nezumi); }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--enji); outline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
 </style>
 </head>
 <body>
