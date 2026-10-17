@@ -71,6 +71,12 @@
   .tower-btn + .tower-btn { border-left: 1px solid var(--line); }
   .tower-btn[aria-pressed="true"] { background: var(--enji); color: #fff; }
   .notice { margin: 4px 0 0; padding: 14px 12px; border: 1px dashed var(--line); border-radius: 3px; color: var(--nezumi); text-align: center; font-family: var(--serif); font-size: 16px; }
+  .parks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 18px 0 0; }
+  .park { aspect-ratio: 1 / 1; min-height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line); background: #fff; color: var(--sumi); border-radius: 3px; font-family: var(--serif); font-size: 20px; font-weight: 700; cursor: pointer; }
+  .park.active { background: var(--kaki); border-color: var(--kaki); color: #fff; font-weight: 900; }
+  .park:disabled { background: #eeeae4; border-color: #d9d2c7; color: #8a827b; cursor: default; }
+  .park small { font-family: var(--sans); font-size: 12px; font-weight: 500; }
+  html.embed .parks { display: none; }
   [hidden] { display: none !important; }
   html.embed body { background: transparent; }
   html.embed .back, html.embed footer, html.embed .brand { display: none; }  /* 系統標頭已有「重生禮儀」，不重複 */
@@ -83,6 +89,13 @@
   <div class="head">
     <span id="mark" class="mark" aria-hidden="true">梅</span>
     <div><p class="brand">重 生 禮 儀</p><h1 id="pageTitle">梅園塔位方位查詢</h1></div>
+  </div>
+
+  <div class="parks" role="group" aria-label="園區">
+    <button type="button" class="park" disabled>福園<small>建置中</small></button>
+    <button type="button" class="park" data-park="壽園" aria-pressed="false">壽園</button>
+    <button type="button" class="park active" data-park="梅園" aria-pressed="true">梅園</button>
+    <button type="button" class="park" disabled>蘭園<small>建置中</small></button>
   </div>
 
   <p id="lead" class="lead">輸入冬山梅園的塔位或牌位號碼，即可查出坐向。</p>
@@ -232,7 +245,7 @@ for (const type of Object.keys(TABLES)) {
 
 let mode = "塔位";
 // 園區：網址帶 ?park=壽園 時為壽園（福恩塔），其餘為梅園（預設）
-const PARK = new URLSearchParams(location.search).get("park") === "壽園" ? "壽園" : "梅園";
+let PARK = new URLSearchParams(location.search).get("park") === "壽園" ? "壽園" : "梅園";
 let tower = "福恩塔";
 
 function normalize(s) {
@@ -553,6 +566,8 @@ function fuBuildAll() {
   }
 }
 
+let towerBound = false;
+
 function initFuPark() {
   document.title = "壽園塔位方位查詢｜重生禮儀";
   $("mark").textContent = "壽";
@@ -560,14 +575,57 @@ function initFuPark() {
   $("lead").textContent = "輸入壽園福恩塔的塔位或牌位號碼，即可查出坐向。";
   $("note").textContent = "福恩塔塔位格式為樓層區塊加兩位組別，再加三位號碼，例如 F1B03123；牌位格式為 FA 加方位字、層數與號碼，例如 FA東0101。";
   $("towerSeg").hidden = false;
+  $("code").value = "";
   mode = "塔位";
-  for (const b of document.querySelectorAll(".tower-btn")) {
-    b.addEventListener("click", () => { tower = b.dataset.tower; fuSync(); });
+  if (!towerBound) {
+    towerBound = true;
+    for (const b of document.querySelectorAll(".tower-btn")) {
+      b.addEventListener("click", () => { tower = b.dataset.tower; fuSync(); });
+    }
   }
+  tower = "福恩塔";
   fuSync();
 }
 
-if (PARK === "壽園") initFuPark(); else buildAll();
+function initMeiyuanPark() {
+  document.title = DEFAULTS.docTitle;
+  $("mark").textContent = DEFAULTS.mark;
+  $("pageTitle").textContent = DEFAULTS.title;
+  $("lead").textContent = DEFAULTS.lead;
+  $("note").textContent = DEFAULTS.note;
+  $("hint").textContent = DEFAULTS.hint;
+  $("towerSeg").hidden = true;
+  $("typeSeg").hidden = false;
+  $("notice").hidden = true;
+  $("f").hidden = false;
+  $("details").hidden = false;
+  $("code").value = "";
+  mode = "塔位";
+  setMode("塔位");
+  buildAll();
+}
+
+function setPark(p) {
+  PARK = p;
+  for (const b of document.querySelectorAll(".park[data-park]")) {
+    const on = b.dataset.park === p;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+  const q = new URLSearchParams(location.search);
+  q.set("park", p);
+  history.replaceState(null, "", "?" + q.toString());
+  if (p === "壽園") initFuPark(); else initMeiyuanPark();
+}
+
+const DEFAULTS = {
+  lead: $("lead").textContent, note: $("note").textContent, hint: $("hint").textContent,
+  title: $("pageTitle").textContent, mark: $("mark").textContent, docTitle: document.title
+};
+for (const b of document.querySelectorAll(".park[data-park]")) {
+  b.addEventListener("click", () => setPark(b.dataset.park));
+}
+setPark(PARK);
 
 // 嵌入模式：把頁面高度告訴外層，讓外層框架跟著長高，不會出現框中框的捲動
 if (document.documentElement.classList.contains('embed') && window.parent !== window) {
