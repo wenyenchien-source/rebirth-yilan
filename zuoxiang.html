@@ -732,7 +732,7 @@ function fuSubmit() {
     show("err", r.error);
     return;
   }
-  $("dir").textContent = r.dir;
+  $("dir").textContent = tower === "寶塔" ? DIR_LABEL[r.dir] : r.dir;
   $("basis").textContent = r.basis;
   $("out").hidden = false;
 }
