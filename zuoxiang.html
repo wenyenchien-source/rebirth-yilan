@@ -102,8 +102,8 @@
 
   <div class="card">
     <div id="towerSeg" class="seg" role="group" aria-label="塔別" hidden>
-      <button type="button" class="tower-btn" data-tower="福恩塔" aria-pressed="true">福恩塔</button>
       <button type="button" class="tower-btn" data-tower="寶塔" aria-pressed="false">寶塔</button>
+      <button type="button" class="tower-btn" data-tower="福恩塔" aria-pressed="true">福恩塔</button>
     </div>
 
     <div id="typeSeg" class="seg" role="group" aria-label="號碼類型">
@@ -483,7 +483,205 @@ const FU_SHRINE_CFG = {
 };
 
 
-function fuCfg() { return mode === "塔位" ? FU_TOWER : FU_SHRINE_CFG; }
+// ===== 寶塔（壽園）資料：負責人 2026-10-19 提供 =====
+// 塔位：代號＋兩位面號即可查；地下一樓第 15 面另需三位號碼（見 BAO_B1A15）
+const BAO_TOWER_LIST = [
+  ["1BF", "坐東", ["10", "13", "16", "18"]],
+  ["1BF", "坐西", ["02", "11", "15", "17"]],
+  ["1BF", "坐南", ["01", "05", "07", "19"]],
+  ["1BF", "坐北", ["03", "06", "08", "12", "20", "21"]],
+  ["1AF", "坐西", ["01"]],
+  ["1AF", "坐南", ["02", "05", "07", "09", "10"]],
+  ["1AF", "坐北", ["03", "06", "08"]],
+  ["2A", "坐東", ["03", "05", "08", "10", "13", "15"]],
+  ["2A", "坐西", ["14", "11", "09", "06", "04", "01"]],
+  ["2A", "坐北", ["12", "07", "02"]],
+  ["2B", "坐東", ["03", "05", "08", "10", "13", "15"]],
+  ["2B", "坐西", ["14", "11", "09", "06", "04", "01"]],
+  ["2B", "坐南", ["12", "07", "02"]],
+  ["2C", "坐東", ["02", "43", "05", "50", "08", "37", "11", "34", "14", "31", "17", "28", "45"]],
+  ["2C", "坐西", ["26", "29", "32", "35", "38", "41", "15", "12", "09", "06", "03", "46"]],
+  ["2C", "坐南", ["42", "39", "36", "33", "30", "27", "24", "22", "20", "18"]],
+  ["2C", "坐北", ["01", "04", "07", "10", "13", "16", "19", "21", "23", "25"]],
+  ["2D", "坐東", ["03", "06"]],
+  ["2D", "坐西", ["04", "01"]],
+  ["2D", "坐南", ["07"]],
+  ["2D", "坐北", ["02", "05"]],
+  ["3E", "坐東", ["27"]],
+  ["3E", "坐西", ["29", "01", "04", "07", "10"]],
+  ["3E", "坐南", ["26", "24", "22", "31", "20", "17", "14", "09", "06", "03"]],
+  ["3E", "坐北", ["28", "25", "12", "11", "08", "15", "05", "18", "02", "23"]],
+  ["3F", "坐東", ["27", "24", "21", "18", "15", "12"]],
+  ["3F", "坐西", ["01", "04", "07", "10", "13", "16", "19"]],
+  ["3F", "坐南", ["20", "17", "14", "11", "23", "08", "05", "26", "02"]],
+  ["3F", "坐北", ["03", "28", "06", "25", "09", "22"]],
+  ["3G", "坐東", ["17", "11", "05"]],
+  ["3G", "坐西", ["01", "02", "07", "08", "13", "14"]],
+  ["3G", "坐南", ["16", "15", "09", "03"]],
+  ["3G", "坐北", ["06", "12", "19", "18"]],
+  ["3H", "坐東", ["38", "35", "32", "29", "26", "23", "19", "18", "15", "12", "09", "06", "03"]],
+  ["3H", "坐西", ["21", "24", "27", "30", "33", "36", "39", "20", "01", "04", "07", "10", "13", "16"]],
+  ["3H", "坐南", ["53", "51"]],
+  ["3H", "坐北", ["37", "34", "31", "28", "25", "22", "52", "50", "17", "14", "11", "08", "05", "02"]],
+  ["5K", "坐東", ["05", "52", "13", "20"]],
+  ["5K", "坐西", ["28"]],
+  ["5K", "坐南", ["02", "07", "09", "01", "50", "11", "15", "17", "19", "22", "25", "27"]],
+  ["5K", "坐北", ["10", "08", "06", "51", "18", "16", "12", "29", "26", "23", "21"]],
+  ["5L", "坐東", ["03", "29"]],
+  ["5L", "坐西", ["06", "13", "52", "21"]],
+  ["5L", "坐南", ["05", "01", "08", "10", "51", "12", "16", "18", "20", "23", "26"]],
+  ["5L", "坐北", ["11", "09", "07", "02", "19", "17", "15", "50", "27", "25", "22", "28"]],
+  ["B1A", "坐東", ["15", "16", "56", "58", "60", "62", "65", "67", "69", "35", "32", "30", "28", "26", "23", "21"]],
+  ["B1A", "坐西", ["15", "18", "68", "66", "63", "61", "59", "57", "55", "20", "22", "25", "27", "29", "31", "33"]],
+  ["B1A", "坐南", ["15", "19", "52", "50", "38", "36"]],
+  ["B1A", "坐北", ["15", "17", "37", "39", "51", "53"]]
+];
+
+// 地下一樓第 15 面：三位號碼範圍
+const BAO_B1A15 = {
+  "坐東": [[101, 105], [151, 155], [201, 205], [251, 255], [301, 305], [351, 355], [501, 505], [551, 555], [601, 605], [651, 655]],
+  "坐西": [[119, 127], [219, 227], [319, 327], [519, 527], [619, 627]],
+  "坐南": [[106, 118], [206, 218], [306, 318], [506, 518], [606, 618]],
+  "坐北": [[128, 150], [228, 250], [328, 350], [528, 550], [628, 650]]
+};
+
+const BAO_TOWER_MAP = new Map();
+const BAO_TOWER_ITEMS = { "坐東": [], "坐西": [], "坐南": [], "坐北": [] };
+for (const [code, dir, faces] of BAO_TOWER_LIST) {
+  for (const f of faces) {
+    BAO_TOWER_MAP.set(code + f, dir);
+    BAO_TOWER_ITEMS[dir].push(code + f);
+  }
+}
+
+// 牌位（一樓）：代號、坐向、面號、號碼起迄（同一組的面共用號碼範圍）
+const BAO_SHRINE_LIST = [
+  ["AE", "坐東", ["01", "03", "06", "07", "09", "11"], 1, 13],
+  ["AE", "坐東", ["02", "05", "08", "10"], 1, 11],
+  ["東", "坐南", ["01", "02", "03", "05", "06", "07", "08", "09", "10", "11"], 1, 98],
+  ["AW", "坐南", ["01", "03", "06", "07", "09", "11"], 1, 37],
+  ["AW", "坐南", ["02", "05", "08", "10"], 1, 36],
+  ["BE", "坐南", ["01", "03", "06", "07", "09", "11"], 1, 37],
+  ["BE", "坐南", ["02", "05", "08", "10"], 1, 36],
+  ["西", "坐北", ["01", "03", "06", "07", "09", "11"], 1, 82],
+  ["西", "坐北", ["02", "05", "08", "10"], 1, 80],
+  ["AN", "坐北", ["01", "03", "06", "07", "09", "11"], 1, 37],
+  ["AN", "坐北", ["02", "05", "08", "10"], 1, 36],
+  ["BW", "坐北", ["01", "03", "06", "07", "09", "11"], 1, 37],
+  ["BW", "坐北", ["02", "05", "08", "10"], 1, 36],
+  ["B", "坐東", ["01", "03", "06", "08", "10", "12"], 1, 16],
+  ["B", "坐東", ["02", "05", "07", "09", "11", "13"], 1, 13],
+  ["B", "坐西", ["15", "17", "19", "21", "23", "26"], 1, 27],
+  ["B", "坐西", ["16", "18", "20", "22", "25", "27"], 1, 26],
+  ["B", "坐南", ["01", "03", "06", "08", "10", "12"], 17, 101],
+  ["B", "坐南", ["02", "05", "07", "09", "11", "13"], 15, 98],
+  ["B", "坐北", ["01", "03", "06", "08", "10", "12"], 128, 216],
+  ["B", "坐北", ["02", "05", "07", "09", "11", "13"], 131, 219]
+];
+
+const BAO_SHRINE_ITEMS = { "坐東": [], "坐西": [], "坐南": [], "坐北": [] };
+const BAO_SHRINE_COUNT = { "坐東": 0, "坐西": 0, "坐南": 0, "坐北": 0 };
+for (const [code, dir, faces, from, to] of BAO_SHRINE_LIST) {
+  for (const f of faces) {
+    BAO_SHRINE_ITEMS[dir].push(code + f + "（" + from + "～" + to + "號）");
+    BAO_SHRINE_COUNT[dir] += to - from + 1;
+  }
+}
+
+function baoFloorOf(code) {
+  if (code === "B1A") return "地下一樓";
+  return { "1": "一樓", "2": "二樓", "3": "三樓", "5": "五樓" }[code[0]] || "";
+}
+
+const BAO_TOWER_CFG = {
+  label: "塔位號碼", placeholder: "例如 2C02、1BF18",
+  hint: "格式：代號加兩位面號，例如 2C02。地下一樓第 15 面要再加三位號碼，例如 B1A15151。",
+  lenWarn: false,
+  validate: null,
+  lookup(code) {
+    const m = code.replace(/-/g, "").match(/^(B1A|1BF|1AF|2[ABCD]|3[EFGH]|5[KL])(\d{2})(\d{3})?$/);
+    if (!m) return { error: "格式應為代號加兩位面號，例如 2C02；地下一樓第 15 面還要加三位號碼，例如 B1A15151。" };
+    const key = m[1] + m[2];
+    if (key === "B1A15") {
+      if (!m[3]) return { error: "地下一樓第 15 面要再輸入三位號碼，例如 B1A15151。" };
+      const num = parseInt(m[3], 10);
+      for (const dir of DIRS) {
+        if ((BAO_B1A15[dir] || []).some(([a, b]) => num >= a && num <= b)) {
+          return { dir, basis: "寶塔塔位・地下一樓 第 15 面 " + num + " 號" };
+        }
+      }
+      return { error: "查無此號，地下一樓第 15 面沒有 " + m[3] + " 號。" };
+    }
+    if (m[3]) return { error: "此面只需填到面，例如 " + key + "。" };
+    const dir = BAO_TOWER_MAP.get(key);
+    if (!dir) return { error: "查無此面（" + key + "），請確認代號與面號。" };
+    return { dir, basis: "寶塔塔位・" + baoFloorOf(m[1]) + " " + key + " 面" };
+  }
+};
+
+const BAO_SHRINE_CFG = {
+  label: "牌位號碼", placeholder: "例如 AE0101、B0101",
+  hint: "格式：代號加兩位面號、兩位號碼，例如 AE0101、B0101、東0101。",
+  lenWarn: false,
+  validate: null,
+  lookup(code) {
+    const m = code.match(/^(BE|BW|AE|AW|AN|B|東|西)(\d{2})(\d{2})$/);
+    if (!m) return { error: "格式應為代號加兩位面號、兩位號碼，例如 AE0101。" };
+    const num = parseInt(m[3], 10);
+    let hitCode = false;
+    let hitFace = false;
+    for (const [c, dir, faces, from, to] of BAO_SHRINE_LIST) {
+      if (c !== m[1]) continue;
+      hitCode = true;
+      if (!faces.includes(m[2])) continue;
+      hitFace = true;
+      if (num >= from && num <= to) {
+        return { dir, basis: "寶塔牌位・一樓 " + m[1] + " 第 " + parseInt(m[2], 10) + " 面 " + num + " 號" };
+      }
+    }
+    if (!hitCode) return { error: "查無此代號（" + m[1] + "）。" };
+    if (!hitFace) return { error: "查無此面（" + m[1] + m[2] + "）。" };
+    return { error: "查無此號，" + m[1] + m[2] + " 面沒有 " + num + " 號。" };
+  }
+};
+
+function baoBuildAll(all) {
+  const isTower = mode === "塔位";
+  const h = document.createElement("h2");
+  h.textContent = "寶塔・" + mode + "區";
+  all.appendChild(h);
+  for (const d of DIRS) {
+    const items = isTower ? BAO_TOWER_ITEMS[d] : BAO_SHRINE_ITEMS[d];
+    const count = isTower ? items.length : BAO_SHRINE_COUNT[d];
+    const unit = isTower ? "面" : "個";
+    const g = document.createElement("div");
+    g.className = "group";
+    const h3 = document.createElement("h3");
+    h3.textContent = items.length ? d + "（" + count + " " + unit + "）" : d + "（無）";
+    g.appendChild(h3);
+    if (items.length) {
+      const chips = document.createElement("div");
+      chips.className = "chips";
+      for (const t of items) {
+        const sp = document.createElement("span");
+        sp.textContent = t;
+        chips.appendChild(sp);
+      }
+      g.appendChild(chips);
+      if (isTower && BAO_B1A15[d]) {
+        const p = document.createElement("p");
+        p.textContent = "地下一樓第 15 面號碼：" + BAO_B1A15[d].map(([a, b]) => a + "～" + b).join("、");
+        g.appendChild(p);
+      }
+    }
+    all.appendChild(g);
+  }
+}
+
+function fuCfg() {
+  if (tower === "寶塔") return mode === "塔位" ? BAO_TOWER_CFG : BAO_SHRINE_CFG;
+  return mode === "塔位" ? FU_TOWER : FU_SHRINE_CFG;
+}
 
 function fuSetMode(type) {
   mode = type;
@@ -491,7 +689,7 @@ function fuSetMode(type) {
 }
 
 function fuSync() {
-  const built = tower === "福恩塔";
+  const built = tower === "福恩塔" || tower === "寶塔";
   for (const b of document.querySelectorAll(".seg-btn")) {
     b.setAttribute("aria-pressed", b.dataset.type === mode ? "true" : "false");
   }
@@ -519,7 +717,7 @@ function fuSubmit() {
   show("err", "");
   show("len", "");
   $("out").hidden = true;
-  if (tower !== "福恩塔") return;
+  if (tower !== "福恩塔" && tower !== "寶塔") return;
   const code = normalize($("code").value);
   if (!code) {
     show("err", "請輸入" + mode + "號碼。");
@@ -538,6 +736,7 @@ function fuSubmit() {
 function fuBuildAll() {
   const all = $("all");
   all.replaceChildren();
+  if (tower === "寶塔") return baoBuildAll(all);
   if (tower !== "福恩塔") return;
   const isTower = mode === "塔位";
   const h = document.createElement("h2");
