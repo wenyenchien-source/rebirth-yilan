@@ -645,6 +645,8 @@ const BAO_SHRINE_CFG = {
   }
 };
 
+const DIR_LABEL = { "坐東": "坐東(東北)", "坐西": "坐西(西南)", "坐南": "坐南(東南)", "坐北": "坐北(西北)" };
+
 function baoBuildAll(all) {
   const isTower = mode === "塔位";
   const h = document.createElement("h2");
@@ -657,7 +659,7 @@ function baoBuildAll(all) {
     const g = document.createElement("div");
     g.className = "group";
     const h3 = document.createElement("h3");
-    h3.textContent = items.length ? d + "（" + count + " " + unit + "）" : d + "（無）";
+    h3.textContent = items.length ? DIR_LABEL[d] + "（" + count + " " + unit + "）" : DIR_LABEL[d] + "（無）";
     g.appendChild(h3);
     if (items.length) {
       const chips = document.createElement("div");
