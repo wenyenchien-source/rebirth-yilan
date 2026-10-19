@@ -596,11 +596,11 @@ function baoFloorOf(code) {
 
 const BAO_TOWER_CFG = {
   label: "塔位號碼", placeholder: "例如 2C02、1BF18",
-  hint: "格式：代號加兩位面號，例如 2C02。地下一樓第 15 面要再加三位號碼，例如 B1A15151。",
+  hint: "格式：代號加兩位面號，例如 2C02（英文不分大小寫）。地下一樓第 15 面要再加三位號碼，例如 B1A15151。",
   lenWarn: false,
   validate: null,
   lookup(code) {
-    const m = code.replace(/-/g, "").match(/^(B1A|1BF|1AF|2[ABCD]|3[EFGH]|5[KL])(\d{2})(\d{3})?$/);
+    const m = code.replace(/-/g, "").toUpperCase().match(/^(B1A|1BF|1AF|2[ABCD]|3[EFGH]|5[KL])(\d{2})(\d{3})?\d*$/);
     if (!m) return { error: "格式應為代號加兩位面號，例如 2C02；地下一樓第 15 面還要加三位號碼，例如 B1A15151。" };
     const key = m[1] + m[2];
     if (key === "B1A15") {
@@ -613,7 +613,6 @@ const BAO_TOWER_CFG = {
       }
       return { error: "查無此號，地下一樓第 15 面沒有 " + m[3] + " 號。" };
     }
-    if (m[3]) return { error: "此面只需填到面，例如 " + key + "。" };
     const dir = BAO_TOWER_MAP.get(key);
     if (!dir) return { error: "查無此面（" + key + "），請確認代號與面號。" };
     return { dir, basis: "寶塔塔位・" + baoFloorOf(m[1]) + " " + key + " 面" };
@@ -622,11 +621,11 @@ const BAO_TOWER_CFG = {
 
 const BAO_SHRINE_CFG = {
   label: "牌位號碼", placeholder: "例如 AE0101、B0101",
-  hint: "格式：代號加兩位面號、兩位號碼，例如 AE0101、B0101、東0101。",
+  hint: "格式：代號加兩位面號、兩位號碼，例如 AE0101、B0101、東0101（英文不分大小寫）。",
   lenWarn: false,
   validate: null,
   lookup(code) {
-    const m = code.match(/^(BE|BW|AE|AW|AN|B|東|西)(\d{2})(\d{2})$/);
+    const m = code.toUpperCase().match(/^(BE|BW|AE|AW|AN|B|東|西)(\d{2})(\d{2})\d*$/);
     if (!m) return { error: "格式應為代號加兩位面號、兩位號碼，例如 AE0101。" };
     const num = parseInt(m[3], 10);
     let hitCode = false;
